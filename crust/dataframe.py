@@ -1,4 +1,11 @@
+import os
 import numpy as np
+from crust.config import get_rootPath
+
+vp = os.path.join(get_rootPath(), "source", "crust_1_0", 'crust1.vp')
+vs = os.path.join(get_rootPath(), "source", "crust_1_0", 'crust1.vs')
+rho = os.path.join(get_rootPath(),"source", "crust_1_0", 'crust1.rho')
+bnd = os.path.join(get_rootPath(),"source", "crust_1_0", 'crust1.bnds')
 
 class CrustData:
     def __init__(self):
@@ -12,11 +19,10 @@ class CrustData:
         self.read_data()
 
     def read_data(self):
-        print(' .... reading all maps ... ')
-        with open('crust1.vp', 'r') as f1, \
-             open('crust1.vs', 'r') as f2, \
-             open('crust1.rho', 'r') as f3, \
-             open('crust1.bnds', 'r') as f4:
+        with open(vp, 'r') as f1, \
+             open(vs, 'r') as f2, \
+             open(rho, 'r') as f3, \
+             open(bnd, 'r') as f4:
             for j in range(self.nla):
                 for i in range(self.nlo):
                     self.vp[:, j, i] = list(map(float, f1.readline().split()))
@@ -24,7 +30,7 @@ class CrustData:
                     self.rho[:, j, i] = list(map(float, f3.readline().split()))
                     self.bnd[:, j, i] = list(map(float, f4.readline().split()))
 
-    def get_data_at_location(self, lat, lon):
+    def one_points_query(self, lat, lon):
         if lon > 180.0:
             lon -= 360.0
         if lon < -180.0:
@@ -54,8 +60,8 @@ class CrustData:
 
         return result
 
-    def interactive_query(self, lat, lon):
-        result = self.get_data_at_location(lat, lon)
+    def one_point_query_text(self, lat, lon):
+        result = self.one_points_query(lat, lon)
         print(f'ilat,ilon,crustal type: {result["ilat"]:4d}, {result["ilon"]:4d}')
         print(f'topography: {result["topography"]:7.2f}')
         print(' layers: vp,vs,rho,bottom')
@@ -69,3 +75,4 @@ class CrustData:
 if __name__ == "__main__":
     crust_data = CrustData()
     results = crust_data.get_data_at_location(lat=30, lon=120)
+    text_results = crust_data.interactive_query(lat=30, lon=120)
