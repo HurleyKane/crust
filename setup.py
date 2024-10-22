@@ -1,14 +1,12 @@
 # 该库对C++进行
 # 安装 python setup.py bdist_wheel
 import setuptools
+import subprocess
 
 VERSION = '0.0.0'
 package_name = f"crust"
 
-with open("requirements.txt", "r") as f:
-    text = f.read()
-    package_names = text.split("\n")
-    install_requires = [f"{package}" for package in package_names]
+subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
 setuptools.setup(
     name=package_name,

@@ -1,34 +1,58 @@
 import os
 import numpy as np
+import xarray as xr
 from crust.config import get_rootPath
 
-vp = os.path.join(get_rootPath(), "source", "crust_1_0", 'crust1.vp')
-vs = os.path.join(get_rootPath(), "source", "crust_1_0", 'crust1.vs')
-rho = os.path.join(get_rootPath(),"source", "crust_1_0", 'crust1.rho')
-bnd = os.path.join(get_rootPath(),"source", "crust_1_0", 'crust1.bnds')
+vp = os.path.join(get_rootPath(), "source",  'crust1.vp')
+vs = os.path.join(get_rootPath(), "source",  'crust1.vs')
+rho = os.path.join(get_rootPath(),"source",  'crust1.rho')
+bnd = os.path.join(get_rootPath(),"source",  'crust1.bnds')
 
-class CrustData:
-    def __init__(self):
-        self.np_ = 9
-        self.nlo = 360
-        self.nla = 180
-        self.vp = np.zeros((self.np_, self.nla, self.nlo))
-        self.vs = np.zeros((self.np_, self.nla, self.nlo))
-        self.rho = np.zeros((self.np_, self.nla, self.nlo))
-        self.bnd = np.zeros((self.np_, self.nla, self.nlo))
-        self.read_data()
+class CrustData(xr.Dataset):
+    def __init__(self, *args, **kargs):
+        super().__init__(*args, **kargs)
 
+    @staticmethod
     def read_data(self):
+        np_ = 9
+        nlo = 360
+        nla = 180
+        vp = np.zeros((np_,  nla, nlo))
+        vs = np.zeros((np_,  nla, nlo))
+        rho = np.zeros((np_, nla, nlo))
+        bnd = np.zeros((np_, nla, nlo))
         with open(vp, 'r') as f1, \
              open(vs, 'r') as f2, \
              open(rho, 'r') as f3, \
              open(bnd, 'r') as f4:
-            for j in range(self.nla):
-                for i in range(self.nlo):
-                    self.vp[:, j, i] = list(map(float, f1.readline().split()))
-                    self.vs[:, j, i] = list(map(float, f2.readline().split()))
+            for j in range(nla):
+                for i in range(nlo):
+                    vp[:, j, i] = list(map(float, f1.readline().split()))
+                    vs[:, j, i] = list(map(float, f2.readline().split()))
                     self.rho[:, j, i] = list(map(float, f3.readline().split()))
                     self.bnd[:, j, i] = list(map(float, f4.readline().split()))
+
+        # 创建坐标
+        layers = ["water", "ice", "upper sediments", "middle sediments", "lower sediments", "upper crust",
+                    "middle crust", "lower crust", "mantle"]
+        la_coords = np.arange(nla)
+        lo_coords = np.arange(nlo)
+
+        # 创建 xarray.Dataset
+        dataset = xr.Dataset(
+            {
+                'VP': (['p', 'la', 'lo'], vp),
+                'VS': (['p', 'la', 'lo'], vs),
+                'RHO': (['p', 'la', 'lo'], rho),
+                'BND': (['p', 'la', 'lo'], bnd)
+            },
+            coords={
+                'p': layers,
+                'lan': la_coords,
+                'lon': lo_coords
+            }
+        )
+        return CrustData(dataset)
 
     def one_points_query(self, lat, lon):
         if lon > 180.0:
@@ -74,5 +98,5 @@ class CrustData:
 # 示例用法
 if __name__ == "__main__":
     crust_data = CrustData()
-    results = crust_data.get_data_at_location(lat=30, lon=120)
-    text_results = crust_data.interactive_query(lat=30, lon=120)
+    results = crust_data.one_points_query(lat=30, lon=120)
+    text_results = crust_data.one_point_query_text(lat=30, lon=120)
