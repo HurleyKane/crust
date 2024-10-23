@@ -2,10 +2,10 @@ import os
 import numpy as np
 from crust.config import get_rootPath
 
-vp = os.path.join(get_rootPath(), "source",  'crust1.vp')
-vs = os.path.join(get_rootPath(), "source",  'crust1.vs')
-rho = os.path.join(get_rootPath(),"source",  'crust1.rho')
-bnd = os.path.join(get_rootPath(),"source",  'crust1.bnds')
+vp = os.path.join(get_rootPath(),  "source",  'crust1.vp')
+vs = os.path.join(get_rootPath(),  "source",  'crust1.vs')
+rho = os.path.join(get_rootPath(), "source",  'crust1.rho')
+bnd = os.path.join(get_rootPath(), "source",  'crust1.bnds')
 
 class CrustResults(dict):
     def __init__(self, seq=None, **kwargs):
@@ -24,7 +24,7 @@ class CrustResults(dict):
             ' upper sediments',
             'middle sediments',
             ' lower sediments',
-            ' upper sediments',
+            '     upper crust',
             '    middle crust',
             '     lower crust'
         ]
@@ -123,3 +123,6 @@ class CrustData:
         return CrustResults(result)
 
 crust_data = CrustData()
+
+if __name__ == '__main__':
+    print(crust_data[31.3, 100.5])

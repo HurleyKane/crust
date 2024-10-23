@@ -13,13 +13,13 @@ setuptools.setup(
     version=VERSION,  # 两个地方都可以
     description="",
     author="chenmingkai",
-    author_email="<EMAIL>",
+    author_email="<chmingkai@outlook.com>",
     url="https://github.com/hurleykane/crust",
     packages=setuptools.find_packages("."), # 自动找
     include_pacVkage_data=True,
     package_data={
         # 引入任何包下的pyd文件，加入字典则对应包下的文件
-        "source": ["crust_1_0/*"]
+        "crust": ["source/*"]
     },
     # install_requires=install_requires,
     setup_requires=[
