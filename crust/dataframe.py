@@ -122,6 +122,4 @@ class CrustData:
         result['nu'] = nu
         return CrustResults(result)
 
-
 crust_data = CrustData()
-print(crust_data[1.5, -40.5])
