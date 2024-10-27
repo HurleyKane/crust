@@ -1,4 +1,13 @@
-/.idea
+*
+!*.py
+!environment.yml
+!.gitignore
+!requirements.txt
+!*.pyd
+!*.ipynb
+!*.md
+!Docker*
+!*/
 /build
-/crust.*
+/.idea
 /dist

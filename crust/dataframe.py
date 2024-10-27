@@ -36,6 +36,47 @@ class CrustResults(dict):
         string += f'{self["mu"]:19.3f}  {self["lambda_para"]:7.3f} {self["E"]:7.3f}  {self["nu"]:7.3f}\n'
         return string
 
+    @property
+    def values(self):
+        import pandas as pd
+        layers = [
+            'water',
+            'ice',
+            'upper sediments',
+            'middle sediments',
+            'lower sediments',
+            'upper crust',
+            'middle crust',
+            'lower crust'
+        ]
+        df = pd.DataFrame(data = self["layers"], index=layers)
+        return df
+
+    def __repr__(self):
+        string = f'ilat,ilon,crustal type: {self["ilat"]:4d}, {self["ilon"]:4d}\n'
+        string += f'topography: {self["topography"]:7.2f}\n'
+        string += f'    layers:{" "*9}  vp      vs     rho     bottom     mu     lambda     E       nu\n'
+        string += f'{" "*13}        km/s    km/s   g/cm3     km        GPa      GPa     GPa\n'
+
+
+        layers = [
+            '           water',
+            '             ice',
+            ' upper sediments',
+            'middle sediments',
+            ' lower sediments',
+            '     upper crust',
+            '    middle crust',
+            '     lower crust'
+        ]
+
+        for index, layer in enumerate(self["layers"]):
+            string += f'{layers[index]}  {layer["vp"]:7.2f} {layer["vs"]:7.2f} {layer["rho"]:7.2f} {layer["bottom"]:8.2f}'
+            string += f'   {layer["mu"]:7.3f}  {layer["lambda_para"]:7.3f} {layer["E"]:7.3f}  {layer["nu"]:7.3f}\n'
+        string += f'pn,sn,rho-mantle {self["pn"]:8.2f} {self["sn"]:7.2f} {self["rho_mantle"]:7.2f}'
+        string += f'{self["mu"]:19.3f}  {self["lambda_para"]:7.3f} {self["E"]:7.3f}  {self["nu"]:7.3f}\n'
+        return string
+
 class CrustData:
     def __init__(self):
         self.read_data()
@@ -125,4 +166,6 @@ class CrustData:
 crust_data = CrustData()
 
 if __name__ == '__main__':
-    print(crust_data[31.3, 100.5])
+    data = crust_data[31.3, 100.5]
+    print(data)
+    print(data.values)
